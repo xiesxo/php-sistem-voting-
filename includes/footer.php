@@ -2,7 +2,7 @@
 
 <footer class="text-center">
     <div class="container">
-       <p class="mb-0">&copy; <?= date('Y') ?> E-Voting System. All rights reserved.</p>
+       <p class="mb-0">&copy; <?= date('Y') ?> E-Voting System. Riki Ekayana & Cok Is.</p>
     </div>
 </footer>
 
