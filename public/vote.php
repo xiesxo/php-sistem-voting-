@@ -1,7 +1,7 @@
 <?php
 require '../includes/session.php';
 require '../config/db.php';
-// perubahan pada sistem vote 
+
 // Ambil user_id dan role dari session
 $user_id = $_SESSION['user_id'];
 $role = $_SESSION['role'];
