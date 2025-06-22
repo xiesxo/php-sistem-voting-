@@ -1,13 +1,13 @@
 <?php 
-session_start(); // Mulai session agar bisa mengakses data session
-// Jika user sudah login (ada session user_id), langsung arahkan ke dashboard
-if (isset($_SESSION['user_id'])) {
-    header("Location: dashboard.php");
-    exit;
-}
-// Ambil pesan error dari session jika ada, lalu hapus supaya tidak muncul terus
-$error = $_SESSION['error'] ?? '';
-unset($_SESSION['error']);
+    session_start(); // Mulai session agar bisa mengakses data session
+    // Jika user sudah login (ada session user_id), langsung arahkan ke dashboard
+    if (isset($_SESSION['user_id'])) {
+        header("Location: dashboard.php");
+        exit;
+    }
+    // Ambil pesan error dari session jika ada, lalu hapus supaya tidak muncul terus
+    $error = $_SESSION['error'] ?? '';
+    unset($_SESSION['error']);  
 ?>
 
 <!DOCTYPE html>

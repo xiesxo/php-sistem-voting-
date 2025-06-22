@@ -117,108 +117,109 @@ $polls = $stmt->fetchAll();
 </head>
 <body>
 
-<!-- Navigasi Utama -->
-<nav class="navbar navbar-expand-lg">
-    <div class="container">
-        <a class="navbar-brand text-white fw-bold" href="#">E-Vote</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <!-- Navigasi ke halaman dashboard -->
-                <li class="nav-item"><a class="nav-link fw-bold" href="dashboard.php">Home</a></li>
+    <!-- Navigasi Utama -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand text-white fw-bold" href="#">E-Vote</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <!-- Navigasi ke halaman dashboard -->
+                    <li class="nav-item"><a class="nav-link fw-bold" href="dashboard.php">Home</a></li>
 
-                <!-- Navigasi ke halaman buat voting (khusus creator) -->
-                <li class="nav-item">
-                    <a class="nav-link fw-bold <?= $role !== 'creator' ? 'disabled text-secondary' : '' ?>" 
-                       href="<?= $role === 'creator' ? 'create_poll.php' : '#' ?>" 
-                       onclick="<?= $role !== 'creator' ? 'alert(\'Hanya creator yang dapat membuat polling.\')' : '' ?>">
-                        Buat Voting
-                    </a>
-                </li>
+                    <!-- Navigasi ke halaman buat voting (khusus creator) -->
+                    <li class="nav-item">
+                        <a class="nav-link fw-bold <?= $role !== 'creator' ? 'disabled text-secondary' : '' ?>" 
+                        href="<?= $role === 'creator' ? 'create_poll.php' : '#' ?>" 
+                        onclick="<?= $role !== 'creator' ? 'alert(\'Hanya creator yang dapat membuat polling.\')' : '' ?>">
+                            Buat Voting
+                        </a>
+                    </li>
 
-                <!-- Navigasi ke halaman ikut voting -->
-                <li class="nav-item"><a class="nav-link fw-bold" href="vote.php">Ikut Voting</a></li>
+                    <!-- Navigasi ke halaman ikut voting -->
+                    <li class="nav-item"><a class="nav-link fw-bold" href="vote.php">Ikut Voting</a></li>
 
-                <!-- Navigasi ke halaman hasil voting -->
-                <li class="nav-item"><a class="nav-link fw-bold" href="hasil_voting.php">Hasil Voting</a></li>
+                    <!-- Navigasi ke halaman hasil voting -->
+                    <li class="nav-item"><a class="nav-link fw-bold" href="hasil_voting.php">Hasil Voting</a></li>
 
-                <!-- Logout -->
-                <li class="nav-item"><a class="nav-link fw-bold" href="logout.php">Log Out</a></li>
-            </ul>
+                    <!-- Logout -->
+                    <li class="nav-item"><a class="nav-link fw-bold" href="logout.php">Log Out</a></li>
+                </ul>
+            </div>
         </div>
+    </nav>
+
+    <!-- Judul Halaman -->
+    <div class="container">
+    <div class="d-flex justify-content-center">
+        <h3 class="judul-box">Hasil Voting</h3>
     </div>
-</nav>
 
-<!-- Judul Halaman -->
-<div class="container">
-   <div class="d-flex justify-content-center">
-      <h3 class="judul-box">Hasil Voting</h3>
-   </div>
+    <!-- Jika ada data polling -->
+    <?php if ($polls): ?>
+            <?php foreach ($polls as $poll): ?>
+                <div class="card-container">
+                    <div class="poll-title"><?= htmlspecialchars($poll['title']) ?></div>
 
-   <!-- Jika ada data polling -->
-   <?php if ($polls): ?>
-        <?php foreach ($polls as $poll): ?>
-            <div class="card-container">
-                <div class="poll-title"><?= htmlspecialchars($poll['title']) ?></div>
+                    <?php
+                    // Ambil semua opsi dari polling
+                    $opt_stmt = $pdo->prepare("SELECT * FROM poll_options WHERE poll_id = ?");
+                    $opt_stmt->execute([$poll['id']]);
+                    $options = $opt_stmt->fetchAll();
 
-                <?php
-                // Ambil semua opsi dari polling
-                $opt_stmt = $pdo->prepare("SELECT * FROM poll_options WHERE poll_id = ?");
-                $opt_stmt->execute([$poll['id']]);
-                $options = $opt_stmt->fetchAll();
+                    // Hitung total suara dalam polling ini
+                    $vote_stmt = $pdo->prepare("SELECT COUNT(*) AS total_votes FROM votes WHERE poll_id = ?");
+                    $vote_stmt->execute([$poll['id']]);
+                    $total_votes = $vote_stmt->fetch()['total_votes'];
+                    ?>
 
-                // Hitung total suara dalam polling ini
-                $vote_stmt = $pdo->prepare("SELECT COUNT(*) AS total_votes FROM votes WHERE poll_id = ?");
-                $vote_stmt->execute([$poll['id']]);
-                $total_votes = $vote_stmt->fetch()['total_votes'];
-                ?>
+                    <!-- Tampilkan setiap opsi voting -->
+                    <?php foreach ($options as $option): 
+                        // Hitung jumlah suara untuk opsi ini
+                        $count_stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM votes WHERE option_id = ?");
+                        $count_stmt->execute([$option['id']]);
+                        $count = $count_stmt->fetch()['count'];
+                        $percentage = $total_votes > 0 ? round(($count / $total_votes) * 100) : 0;
+                    ?>
+                        <div class="option-box">
+                            <?= htmlspecialchars($option['option_text']) ?>
+                            <span class="badge-vote"><?= $count ?> suara (<?= $percentage ?>%)</span>
+                        </div>
+                    <?php endforeach; ?>
 
-                <!-- Tampilkan setiap opsi voting -->
-                <?php foreach ($options as $option): 
-                    // Hitung jumlah suara untuk opsi ini
-                    $count_stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM votes WHERE option_id = ?");
-                    $count_stmt->execute([$option['id']]);
-                    $count = $count_stmt->fetch()['count'];
-                    $percentage = $total_votes > 0 ? round(($count / $total_votes) * 100) : 0;
-                ?>
-                    <div class="option-box">
-                        <?= htmlspecialchars($option['option_text']) ?>
-                        <span class="badge-vote"><?= $count ?> suara (<?= $percentage ?>%)</span>
-                    </div>
-                <?php endforeach; ?>
+                    <!-- Tampilkan total suara -->
+                    <div class="total-vote">Total Suara: <?= $total_votes ?></div>
 
-                <!-- Tampilkan total suara -->
-                <div class="total-vote">Total Suara: <?= $total_votes ?></div>
-
-                <!-- Tombol ekspor ke PDF -->
-                <div class="text-center mt-2">
-                    <a href="../actions/export_pdf.php?poll_id=<?= $poll['id'] ?>" 
-                       class="btn btn-success" target="_blank">
-                        Ekspor ke PDF
-                    </a>
-                </div>
-
-                <!-- Jika role creator, tampilkan tombol hapus -->
-                <?php if ($role === 'creator'): ?>
-                    <div class="text-center mt-3">
-                        <a href="../actions/delete_poll.php?poll_id=<?= $poll['id'] ?>"
-                           class="btn btn-hapus"
-                           onclick="return confirm('Yakin ingin menghapus polling ini?')">
-                            Hapus Voting
+                    <!-- Tombol ekspor ke PDF -->
+                    <div class="text-center mt-2">
+                        <a href="../actions/export_pdf.php?poll_id=<?= $poll['id'] ?>" 
+                        class="btn btn-success" target="_blank">
+                            Ekspor ke PDF
                         </a>
                     </div>
-                <?php endif; ?>
-            </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <!-- Jika tidak ada hasil voting -->
-        <p class="text-center"><em>Tidak ada hasil voting yang tersedia.</em></p>
-    <?php endif; ?>
-</div>
 
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                    <!-- Jika role creator, tampilkan tombol hapus -->
+                    <?php if ($role === 'creator'): ?>
+                        <div class="text-center mt-3">
+                            <a href="../actions/delete_poll.php?poll_id=<?= $poll['id'] ?>"
+                            class="btn btn-hapus"
+                            onclick="return confirm('Yakin ingin menghapus polling ini?')">
+                                Hapus Voting
+                            </a>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <!-- Jika tidak ada hasil voting -->
+            <p class="text-center"><em>Tidak ada hasil voting yang tersedia.</em></p>
+        <?php endif; ?>
+    </div>
+  
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

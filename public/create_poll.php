@@ -131,7 +131,7 @@ if ($role === 'voter') {
 </nav>
 
   <!-- Form Buat Polling -->
-  <div class="content my-2">
+  <div class="content my-2 mb-5 mt-5">
     <div class="form-container">
       <h3 class="text-center mb-4 text-primary fw-bold">Buat Polling Baru</h3>
       
@@ -181,7 +181,8 @@ if ($role === 'voter') {
     container.appendChild(input);
   }
 </script>
-
+    <!-- Memuat footer -->
+    <?php include '../includes/footer.php'; ?>
 <!-- Memuat Bootstrap JS Bundle -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
