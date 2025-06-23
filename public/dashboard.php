@@ -1,7 +1,7 @@
 <?php  
 // Memulai sesi dan menghubungkan ke database
 require '../includes/session.php';
-require '../config/db.php';
+require '../config/db.php'; //menghubungkan ke database
 
 // Mengambil informasi role dan user_id dari sesi
 $role = $_SESSION['role'];
@@ -164,7 +164,10 @@ $user_id = $_SESSION['user_id'];
                     <h2 class="fw-bold text-primary">Selamat datang</h2>
                     <h4 class="text-secondary pb-3 position-relative" style="height: 28px;">
                         <span id="typing-text" class="fw-normal text-dark"></span>
-                        <span id="typing-placeholder" class="fw-normal text-dark d-inline-block"><?= $_SESSION['username'] ?> (<?= $_SESSION['role'] ?>)</span>
+                        <!--Menampilkan username dan role dengan efek ketik-->
+                        <span id="typing-placeholder" class="fw-normal text-dark d-inline-block">
+                            <?= $_SESSION['username'] ?> (<?= $_SESSION['role'] ?>)
+                        </span>
                     </h4>
                     <p class="my-3 mb-0 pb-5"><b><em>E-Vote: Voting Online Cepat & Aman | Fast & Secure Online Voting</em></b></p>
                     <p>Join the vote, your voice matters! 🙌</p>

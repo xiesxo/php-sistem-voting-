@@ -6,7 +6,9 @@ require '../config/db.php';
 $user_id = $_SESSION['user_id'];
 $role = $_SESSION['role'];
 
-// Query untuk mengambil polling yang belum diikuti user dan masih aktif
+// Query untuk mengambil polling yang:
+// 1. Belum diikuti oleh user ini (poll_id tidak ada di tabel votes untuk user_id ini)
+// 2. Masih aktif (deadline lebih besar dari waktu sekarang)
 $stmt = $pdo->prepare("
   SELECT * FROM polls 
   WHERE id NOT IN (
@@ -15,7 +17,7 @@ $stmt = $pdo->prepare("
   AND deadline >= NOW()
 ");
 $stmt->execute([$user_id]);
-$available_polls = $stmt->fetchAll();
+$available_polls = $stmt->fetchAll();// Menyimpan polling yang bisa diikuti user
 ?>
 
 <!DOCTYPE html>
@@ -212,7 +214,7 @@ $available_polls = $stmt->fetchAll();
         Polling baru belum tersedia.
       </div>
     <?php else: ?>
-      <!-- ===== Daftar Polling yang Bisa Diikuti ===== -->
+      <!-- ===== Loop untuk menampilkan setiap polling yang tersedia ===== -->
       <div class="row justify-content-center">
         <?php foreach ($available_polls as $poll): ?>
           <div class="col-md-6 col-lg-4 mb-4">
@@ -242,7 +244,7 @@ $available_polls = $stmt->fetchAll();
                   <button type="submit" class="btn btn-vote">Kirim Suara</button>
                 </div>
               </form>
-              <!-- ===== End Form Voting ===== -->
+              
             </div>
           </div>
         <?php endforeach; ?>
