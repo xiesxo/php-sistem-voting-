@@ -28,7 +28,7 @@ $available_polls = $stmt->fetchAll();// Menyimpan polling yang bisa diikuti user
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <style>
-  
+
      html, body {
       height: 100%;
       margin: 0;
@@ -224,9 +224,9 @@ $available_polls = $stmt->fetchAll();// Menyimpan polling yang bisa diikuti user
               <form method="POST" action="../actions/vote_action.php">
                 `<?php
                 // Ambil opsi untuk polling ini
-                $opt_stmt = $pdo->prepare("SELECT * FROM poll_options WHERE poll_id = ?");
-                $opt_stmt->execute([$poll['id']]);
-                $options = $opt_stmt->fetchAll();
+                  $opt_stmt = $pdo->prepare("SELECT * FROM poll_options WHERE poll_id = ?");
+                  $opt_stmt->execute([$poll['id']]);
+                  $options = $opt_stmt->fetchAll();
                 ?>
                 <div class="vstack gap-2">
                   <?php foreach ($options as $option): ?>
