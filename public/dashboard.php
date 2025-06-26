@@ -55,6 +55,7 @@ $user_id = $_SESSION['user_id'];
             overflow: hidden;
             max-width: 900px;
             width: 100%;
+            margi
         }
 
         .dashboard-row {
@@ -226,5 +227,6 @@ $user_id = $_SESSION['user_id'];
             if (typingElement) type();
         });
     </script>
+    <!-- End of Typing Effect Script -->
 </body>
 </html>
